@@ -45,6 +45,8 @@ class HomeController extends Controller
         $data = $zk->getAttendance();
         $zk->disconnect();
 
+        
+
         $return['attendances'] = $data;
         $return['branch'] = env('BRANCH_ID');
         $curl = curl_init();
@@ -56,13 +58,20 @@ class HomeController extends Controller
         CURLOPT_TIMEOUT => 0,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_CUSTOMREQUEST => 'POST',
         CURLOPT_POSTFIELDS =>json_encode($return),
         CURLOPT_HTTPHEADER => array(
+            'Authorization: Bearer '.env('AUTH_TOKEN'),
             'Content-Type: application/json'
         ),
         ));
         $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+        }
+        
+        
         curl_close($curl);
         dd($response);
     }
