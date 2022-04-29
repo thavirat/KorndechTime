@@ -73,7 +73,6 @@ class HomeController extends Controller
         
         echo 'นำเข้ารายชื่อ '.$response.' รายการ';
         curl_close($curl);
-        
 
         $curl = curl_init();
 
@@ -84,6 +83,7 @@ class HomeController extends Controller
         CURLOPT_MAXREDIRS => 10,
         CURLOPT_TIMEOUT => 0,
         CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'POST',
         CURLOPT_POSTFIELDS =>'{
@@ -98,9 +98,38 @@ class HomeController extends Controller
         $response = curl_exec($curl);
 
         curl_close($curl);
+        echo '<br>';
+        echo 'ประมวลผลเมื่อวานสำเร็จ '.$response.' รายการ';
+        
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => env('API_URL').'TransferDataTimeWork',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS =>'{
+            "branch": "'.env('BRANCH_ID').'",
+            "date" : "'.date('Y-m-d').'"
+        }',
+        CURLOPT_HTTPHEADER => array(
+            'Authorization: Bearer '.env('AUTH_TOKEN'),
+            'Content-Type: application/json'
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
 
         echo '<br>';
-        echo 'ประมวลผลสำเร็จ '.$response.' รายการ';
+        echo 'ประมวลผลวันนี้สำเร็จ '.$response.' รายการ';
     }
 
     /**
