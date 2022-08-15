@@ -127,6 +127,11 @@ class HomeController extends Controller
         $response = curl_exec($curl);
 
         curl_close($curl);
+        
+        $zk = new ZKTeco(config('zkteco.ip'));
+        $zk->connect();
+        $zk->clearAttendance();
+        $zk->disconnect();
 
         echo '<br>';
         echo 'ประมวลผลวันนี้สำเร็จ '.$response.' รายการ';
