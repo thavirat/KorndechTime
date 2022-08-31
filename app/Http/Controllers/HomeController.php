@@ -43,9 +43,9 @@ class HomeController extends Controller
         $zk = new ZKTeco(config('zkteco.ip'));
         $zk->connect();
         $data = $zk->getAttendance();
-        $zk->disconnect();
 
-        
+
+
 
         $return['attendances'] = $data;
         $return['branch'] = env('BRANCH_ID');
@@ -69,8 +69,12 @@ class HomeController extends Controller
         $response = curl_exec($curl);
         if (curl_errno($curl)) {
             $error_msg = curl_error($curl);
+        }else{
+            $zk->clearAttendance();
         }
-        
+
+        $zk->disconnect();
+
         echo 'นำเข้ารายชื่อ '.$response.' รายการ';
         curl_close($curl);
 
@@ -100,7 +104,7 @@ class HomeController extends Controller
         curl_close($curl);
         echo '<br>';
         echo 'ประมวลผลเมื่อวานสำเร็จ '.$response.' รายการ';
-        
+
 
         $curl = curl_init();
 
@@ -127,7 +131,7 @@ class HomeController extends Controller
         $response = curl_exec($curl);
 
         curl_close($curl);
-        
+
         $zk = new ZKTeco(config('zkteco.ip'));
         $zk->connect();
         $zk->clearAttendance();
